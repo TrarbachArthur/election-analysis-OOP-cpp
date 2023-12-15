@@ -4,17 +4,16 @@
 
 #include <iostream>
 #include <iomanip>
-#include "eleicao.h" // Certifique-se de incluir o cabeçalho correto para a classe Eleicao
+#include "eleicao.h"
+
+using namespace std;
 
 class Relatorio {
 private:
-    Eleicao eleicao;
-    static std::locale localeBR;
-    static std::ostream& floatOut(std::ostream& os);
-    static std::ostream& intOut(std::ostream& os);
+    Eleicao& eleicao;
 
 public:
-    Relatorio(const Eleicao& eleicao);
+    Relatorio(Eleicao& eleicao);
 
     void geraRelatorio1() const;
 

@@ -16,14 +16,11 @@ Candidato::Candidato(
     numero(numero),
     nome(nome),
     partido(partido),
-    ehEleito(ehEleito),
-    dataNascimento(dataNascimento),
     ehFederado(ehFederado),
+    dataNascimento(dataNascimento),
+    ehEleito(ehEleito),
     genero(genero),
-    ehVotoLegenda(ehVotoLegenda) {
-    
-    partido.addCandidato(this);
-}
+    ehVotoLegenda(ehVotoLegenda) {}
 
 TipoCandidato Candidato::getTipo() const {
     return tipo;
@@ -78,20 +75,17 @@ void Candidato::processaVotos(int votos) {
 }
 
 ostream& operator<<(ostream& os, const Candidato& t) {
-    locale loc("pt_BR.utf8");
-    os.imbue(loc);
-
     os << t.nome << " (" << t.partido.getSigla() << ", "; 
     os << t.getVotos() << " votos)" << endl;
     return os;
 }
 
-bool Candidato::operator>(const Candidato& c) const {
-    int dif = c.getVotos() - getVotos();
+bool Candidato::operator>(const Candidato* c) const {
+    int dif = c->getVotos() - getVotos();
 
     if (dif != 0) {
         return dif < 0;
     } else {
-        return dataNascimento < c.getDataNascimento();
+        return dataNascimento < c->getDataNascimento();
     }
 }

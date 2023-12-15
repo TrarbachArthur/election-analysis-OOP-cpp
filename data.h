@@ -2,6 +2,7 @@
 #define date_h
 #include <vector>
 #include <string>
+#include <sstream>
 
 using namespace std;
 
@@ -13,7 +14,9 @@ private:
   int ano;
 
 public:
+  Data();
   Data(int dia, int mes, int ano);
+  Data(string& dataStr);
   int getDiffAnos(const Data& data) const;
   bool operator>(const Data& data2) const;
   bool operator<(const Data& data2) const;

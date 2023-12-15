@@ -5,37 +5,43 @@
 #include "leitor.h"
 #include "relatorio.h"
 
+using namespace std;
 
 int main(int argc, char *argv[]) {
     if (argc < 5) {
-        std::cout << "Usage: ./deputados <opcao_de_cargo> <caminho_arquivo_candidatos> <caminho_arquivo_votacao> <data>" << std::endl;
+        cout << "Usage: ./deputados <opcao_de_cargo> <caminho_arquivo_candidatos> <caminho_arquivo_votacao> <data>" << endl;
         return 1;
     }
 
+    // locale loc("pt_BR.utf8");
+    // locale::global(loc);
+    // cout.imbue(loc);
+
     int opcaoCargo;
-    std::string opcaoCargoStr = argv[1];
+    string opcaoCargoStr = argv[1];
 
     if (opcaoCargoStr == "--federal") {
         opcaoCargo = 6;
     } else if (opcaoCargoStr == "--estadual") {
         opcaoCargo = 7;
     } else {
-        throw std::runtime_error("Opcao de cargo invalida");
+        throw runtime_error("Opcao de cargo invalida");
     }
 
-    std::string caminhoArquivoCandidatos = argv[2];
-    std::string caminhoArquivoVotacao = argv[3];
-    std::tm data = {};
+    string caminhoArquivoCandidatos = argv[2];
+    string caminhoArquivoVotacao = argv[3];
+    Data data;
+    string dataStr = argv[4];
 
-    std::istringstream dateStream(argv[4]);
-    dateStream >> std::get_time(&data, "%d/%m/%Y");
-
-    if (dateStream.fail()) {
-        std::cout << "Data invalida" << std::endl;
+    try {
+        data = Data(dataStr);
+    }
+    catch (invalid_argument& e) {
+        cout << "Data invalida" << endl;
         return 1;
     }
 
-    Eleicao eleicao(static_cast<TipoCandidato>(opcaoCargo), data);
+    Eleicao eleicao((TipoCandidato)opcaoCargo, data);
     Leitor leitor(eleicao, caminhoArquivoCandidatos, caminhoArquivoVotacao);
 
     leitor.leArquivos();

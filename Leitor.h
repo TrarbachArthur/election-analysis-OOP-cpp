@@ -8,36 +8,34 @@
 #include <string>
 #include <ctime>
 #include <iomanip>
-#include "eleicao.h" // Certifique-se de incluir o cabeçalho correto para a classe Eleicao
+#include "eleicao.h"
+
+using namespace std;
 
 class Leitor {
 private:
-    Eleicao eleicao;
-    std::string caminhoArquivoCandidatos;
-    std::string caminhoArquivoVotacao;
-
-    static const int CD_CARGO;
-    static const int NR_VOTAVEL;
-    static const int QT_VOTOS;
-    static const int CD_CARGO_CAND;
-    static const int CD_SITU;
-    static const int NR_CAND;
-    static const int NM_URNA;
-    static const int NR_PART;
-    static const int SG_PART;
-    static const int NR_FED;
-    static const int DT_NASC;
-    static const int CD_SIT;
-    static const int CD_GEN;
-    static const int NM_TIPO;
-
-    static std::string le_conteudo_string(int i, const std::vector<std::string>& separated);
-    static int le_conteudo_int(int i, const std::vector<std::string>& separated);
-
+    Eleicao& eleicao;
+    string& caminhoArquivoCandidatos;
+    string& caminhoArquivoVotacao;
 public:
-    Leitor(const Eleicao& eleicao, const std::string& caminhoArquivoCandidatos, const std::string& caminhoArquivoVotacao);
+    static const int CD_CARGO = 13;
+    static const int NR_VOTAVEL = 19;
+    static const int QT_VOTOS = 21;
+    static const int CD_CARGO_CAND = 13;
+    static const int CD_SITU = 68;
+    static const int NR_CAND = 16;
+    static const int NM_URNA = 18;
+    static const int NR_PART = 27;
+    static const int SG_PART = 28;
+    static const int NR_FED = 30;
+    static const int DT_NASC = 42;
+    static const int CD_SIT = 56;
+    static const int CD_GEN = 45;
+    static const int NM_TIPO = 67;
+    
+    Leitor(Eleicao& eleicao, string& caminhoArquivoCandidatos, string& caminhoArquivoVotacao);
 
     void leArquivos();
 };
 
-#endif // LEITOR_H
+#endif

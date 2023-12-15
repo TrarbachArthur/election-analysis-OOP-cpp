@@ -1,161 +1,152 @@
-#include <iostream>
-#include <fstream>
-#include <sstream>
-#include <string>
-#include <ctime>
-#include <iomanip>
-#include "eleicao.h" // Certifique-se de incluir o cabeçalho correto para a classe Eleicao
-#include "util.h"    // Certifique-se de incluir o cabeçalho correto para as enums Genero e TipoCandidato
+#include "leitor.h"
 
-class Leitor {
-private:
-    Eleicao eleicao;
-    std::string caminhoArquivoCandidatos;
-    std::string caminhoArquivoVotacao;
+static string iso_8859_1_to_utf8(string &str) {
+    // adaptado de: https://stackoverflow.com/a/39884120 :-)
+    string strOut;
+    for (string::iterator it = str.begin(); it != str.end(); ++it)
+    {
+        uint8_t ch = *it;
+        if (ch < 0x80)
+        {
+        // já está na faixa ASCII (bit mais significativo 0), só copiar para a saída
+        strOut.push_back(ch);
+        }
+        else
+        {
+        // está na faixa ASCII-estendido, escrever 2 bytes de acordo com UTF-8
+        // o primeiro byte codifica os 2 bits mais significativos do byte original (ISO-8859-1)
+        strOut.push_back(0b11000000 | (ch >> 6));
+        // o segundo byte codifica os 6 bits menos significativos do byte original (ISO-8859-1)
+        strOut.push_back(0b10000000 | (ch & 0b00111111));
+        }
+    }
+    return strOut;
+}
 
-    static const int CD_CARGO = 17;
-    static const int NR_VOTAVEL = 19;
-    static const int QT_VOTOS = 21;
-    static const int CD_CARGO_CAND = 13;
-    static const int CD_SITU = 68;
-    static const int NR_CAND = 16;
-    static const int NM_URNA = 18;
-    static const int NR_PART = 27;
-    static const int SG_PART = 28;
-    static const int NR_FED = 30;
-    static const int DT_NASC = 42;
-    static const int CD_SIT = 56;
-    static const int CD_GEN = 45;
-    static const int NM_TIPO = 67;
+Leitor::Leitor(Eleicao& eleicao, string& caminhoArquivoCandidatos, string& caminhoArquivoVotacao)
+    : eleicao(eleicao), caminhoArquivoCandidatos(caminhoArquivoCandidatos), caminhoArquivoVotacao(caminhoArquivoVotacao) {}
 
-    static std::string le_conteudo_string(int i, const std::vector<std::string>& separated) {
-        std::string x = "";
-        try {
-            x = separated[i].substr(1, separated[i].length() - 2);
-        } catch (const std::exception& e) {
-            std::cerr << "Arquivo fora do padrão fornecido!" << std::endl;
+void Leitor::leArquivos() {
+    // LENDO O ARQ DE CANDIDATOS
+    string line;
+    try {
+        ifstream file(caminhoArquivoCandidatos);
+        
+        if (!file.is_open()) {
+            cerr << "Erro ao abrir o arquivo de candidatos." << endl;
             exit(1);
         }
-        return x;
-    }
+        
+        getline(file, line); // Ignora a primeira linha
+        
+        while (getline(file, line, '\n')) {
+            if (line.size() == 0) break;
 
-    static int le_conteudo_int(int i, const std::vector<std::string>& separated) {
-        int y = 0;
-        try {
-            std::string x = separated[i].substr(1, separated[i].length() - 2);
-            y = std::stoi(x);
-        } catch (const std::exception& e) {
-            std::cerr << "Arquivo fora do padrão fornecido!" << std::endl;
-            exit(1);
-        }
-        return y;
-    }
+            line = iso_8859_1_to_utf8(line);
+            vector<string> separated;
+            istringstream ss(line);
+            string token;
 
-public:
-    Leitor(const Eleicao& eleicao, const std::string& caminhoArquivoCandidatos, const std::string& caminhoArquivoVotacao)
-        : eleicao(eleicao), caminhoArquivoCandidatos(caminhoArquivoCandidatos), caminhoArquivoVotacao(caminhoArquivoVotacao) {}
-
-    void leArquivos() {
-        // LENDO O ARQ DE CANDIDATOS
-        try {
-            std::ifstream file(caminhoArquivoCandidatos);
-            if (!file.is_open()) {
-                std::cerr << "Erro ao abrir o arquivo de candidatos." << std::endl;
-                exit(1);
+            while (getline(ss, token, ';')) {
+                token = token.substr(1, token.length() - 2);
+                separated.push_back(token);
             }
 
-            std::string line;
-            std::getline(file, line); // Ignora a primeira linha
+            // cout << separated[CD_CARGO] << endl;
+            int cargo = stoi(separated[CD_CARGO]);
+            // cout << separated[CD_SITU] << endl;
+            int situacaoCandidatura = stoi(separated[CD_SITU]);
+            // cout << separated[NR_CAND] << endl;
+            int numeroCandidato = stoi(separated[NR_CAND]);
+            // cout << separated[NM_URNA] << endl;
+            string nomeCandidato = separated[NM_URNA];
+            // cout << separated[NR_PART] << endl;
+            int numeroPartido = stoi(separated[NR_PART]);
+            // cout << separated[SG_PART] << endl;
+            string siglaPartido = separated[SG_PART];
+            // cout << separated[NR_FED] << endl;
+            int numeroFederacao = stoi(separated[NR_FED]);
+            // cout << separated[DT_NASC] << endl;
+            string strNascimento = separated[DT_NASC];
+            // cout << separated[CD_SIT] << endl;
+            int situacaoTurno = stoi(separated[CD_SIT]);
+            // cout << separated[CD_GEN] << endl;
+            int genero = stoi(separated[CD_GEN]);
+            // cout << separated[NM_TIPO] << endl;
+            string strTipoVoto = separated[NM_TIPO];
 
-            while (std::getline(file, line)) {
-                std::vector<std::string> separated;
-                std::istringstream ss(line);
-                std::string token;
+            Data dataNascimento;
+            try {
+                dataNascimento = Data(strNascimento);
+            } catch (const exception& e) {
+                // Ignora candidatos com data de nascimento inválida
+                continue;
+            }
 
-                while (std::getline(ss, token, ';')) {
-                    separated.push_back(token);
-                }
+            bool ehFederado = numeroFederacao != -1;
+            bool ehEleito = situacaoTurno == 2 || situacaoTurno == 3;
+            bool ehVotoLegenda = strTipoVoto == "Válido (legenda)";
+            bool ehDeferido = situacaoCandidatura == 2 || situacaoCandidatura == 16;
 
-                int cargo = le_conteudo_int(CD_CARGO_CAND, separated);
-                int situacaoCandidatura = le_conteudo_int(CD_SITU, separated);
-                int numeroCandidato = le_conteudo_int(NR_CAND, separated);
-                std::string nomeCandidato = le_conteudo_string(NM_URNA, separated);
-                int numeroPartido = le_conteudo_int(NR_PART, separated);
-                std::string siglaPartido = le_conteudo_string(SG_PART, separated);
-                int numeroFederacao = le_conteudo_int(NR_FED, separated);
-                std::string strNascimento = le_conteudo_string(DT_NASC, separated);
-                int situacaoTurno = le_conteudo_int(CD_SIT, separated);
-                int genero = le_conteudo_int(CD_GEN, separated);
-                std::string strTipoVoto = le_conteudo_string(NM_TIPO, separated);
+            cout << "Processando candidato" << endl;
+            eleicao.processaCandidato(
+                (TipoCandidato) cargo,
+                ehDeferido,
+                numeroCandidato,
+                nomeCandidato,
+                numeroPartido,
+                siglaPartido,
+                ehFederado,
+                dataNascimento,
+                ehEleito,
+                (Genero) genero,
+                ehVotoLegenda
+            );
+        }
+    } catch (const exception& e) {
+        cerr << e.what() << endl;
+        cerr << "Erro ao ler o arquivo de candidatos." << endl;
+        exit(1);
+    }
 
-                std::tm dataNascimento = {};
-                try {
-                    std::istringstream dateStream(strNascimento);
-                    dateStream >> std::get_time(&dataNascimento, "%d/%m/%Y");
-                } catch (const std::exception& e) {
-                    // Ignora candidatos com data de nascimento inválida
-                    continue;
-                }
+    // LENDO O ARQ DE VOTAÇÃO
+    try {
+        ifstream file(caminhoArquivoVotacao);
+        if (!file.is_open()) {
+            cerr << "Erro ao abrir o arquivo de votação." << endl;
+            exit(1);
+        }
 
-                bool ehFederado = numeroFederacao != -1;
-                bool ehEleito = situacaoTurno == 2 || situacaoTurno == 3;
-                bool ehVotoLegenda = strTipoVoto == "Válido (legenda)";
-                bool ehDeferido = situacaoCandidatura == 2 || situacaoCandidatura == 16;
+        string line;
+        getline(file, line); // Ignora a primeira linha
 
-                eleicao.processaCandidato(
-                    TipoCandidato::parseInt(cargo),
-                    ehDeferido,
-                    numeroCandidato,
-                    nomeCandidato,
-                    numeroPartido,
-                    siglaPartido,
-                    ehFederado,
-                    dataNascimento,
-                    ehEleito,
-                    Genero::parseInt(genero),
-                    ehVotoLegenda
+        while (getline(file, line)) {
+            vector<string> separated;
+            istringstream ss(line);
+            string token;
+
+            while (getline(ss, token, ';')) {
+                token = token.substr(1, token.length() - 2);
+                separated.push_back(token);
+            }
+
+            int cargo = stoi(separated[CD_CARGO]);
+            int numeroVotado = stoi(separated[NR_VOTAVEL]);
+            int qtdVotos = stoi(separated[QT_VOTOS]);
+            // int cargo = Leitor::le_conteudo_int(CD_CARGO, separated);
+            // int numeroVotado = Leitor::le_conteudo_int(NR_VOTAVEL, separated);
+            // int qtdVotos = Leitor::le_conteudo_int(QT_VOTOS, separated);
+
+            if (numeroVotado != 95 && numeroVotado != 96 && numeroVotado != 97 && numeroVotado != 98) {
+                eleicao.processaVotos(
+                    (TipoCandidato) cargo,
+                    numeroVotado,
+                    qtdVotos
                 );
             }
-        } catch (const std::exception& e) {
-            std::cerr << "Erro ao ler o arquivo de candidatos." << std::endl;
-            exit(1);
         }
-
-        // LENDO O ARQ DE VOTAÇÃO
-        try {
-            std::ifstream file(caminhoArquivoVotacao);
-            if (!file.is_open()) {
-                std::cerr << "Erro ao abrir o arquivo de votação." << std::endl;
-                exit(1);
-            }
-
-            std::string line;
-            std::getline(file, line); // Ignora a primeira linha
-
-            while (std::getline(file, line)) {
-                std::vector<std::string> separated;
-                std::istringstream ss(line);
-                std::string token;
-
-                while (std::getline(ss, token, ';')) {
-                    separated.push_back(token);
-                }
-
-                int cargo = le_conteudo_int(CD_CARGO, separated);
-                int numeroVotado = le_conteudo_int(NR_VOTAVEL, separated);
-                int qtdVotos = le_conteudo_int(QT_VOTOS, separated);
-
-                if (numeroVotado != 95 && numeroVotado != 96 && numeroVotado != 97 && numeroVotado != 98) {
-                    eleicao.processaVotos(
-                        TipoCandidato::parseInt(cargo),
-                        numeroVotado,
-                        qtdVotos
-                    );
-                }
-            }
-        } catch (const std::exception& e) {
-            std::cerr << "Erro ao ler o arquivo de votação." << std::endl;
-            exit(1);
-        }
+    } catch (const exception& e) {
+        cerr << "Erro ao ler o arquivo de votação." << endl;
+        exit(1);
     }
-};
+}

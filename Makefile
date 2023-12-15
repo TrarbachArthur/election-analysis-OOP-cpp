@@ -45,11 +45,13 @@ $(EXECUTAVEL): $(OBJETOS)
 
 # comandos para execução	
 runfederal: $(EXECUTAVEL)
-	@./$(EXECUTAVEL) --federal candidatos.csv votacao.csv 02/10/2022
+	@./$(EXECUTAVEL) --federal candidatos.csv votacao.csv 02/10/2022 >> federal.txt
 
 runestadual: $(EXECUTAVEL)
 	@./$(EXECUTAVEL) --estadual candidatos.csv votacao.csv 02/10/2022
 
+valestadual: $(EXECUTAVEL)
+	@valgrind --leak-check=full ./$(EXECUTAVEL) --estadual candidatos.csv votacao.csv 02/10/2022
 # comando para limpeza
 clean: 
 	@rm *.o $(EXECUTAVEL) *.csv *.txt

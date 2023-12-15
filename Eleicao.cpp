@@ -6,44 +6,44 @@ TipoCandidato Eleicao::getOpcaoCargo() const {
     return opcaoCargo;
 }
 
-const unordered_map<int, Partido&> Eleicao::getPartidos() const {
+const unordered_map<int, Partido>& Eleicao::getPartidos() const {
     return partidos;
 }
 
-const vector<Partido&> Eleicao::getPartidosValues() const {
-    vector<Partido&> result;
-    for (const auto& kv : partidos) {
-        result.push_back(kv.second);
+const vector<Partido*> Eleicao::getPartidosValues() const {
+    vector<Partido*> result;
+    for (auto kv : partidos) {
+        result.push_back(&kv.second);
     }
     return result;
 }
 
 void Eleicao::addPartido(Partido& partido) {
-    this->partidos.insert({partido.getNumero(), partido});
+    this->partidos.insert(pair<int, Partido>(partido.getNumero(), partido));
 }
 
-const unordered_map<int, Candidato&> Eleicao::getCandidatos() const {
+const unordered_map<int, Candidato>& Eleicao::getCandidatos() const {
     return candidatos;
 }
 
-const vector<Candidato&> Eleicao::getCandidatosValues() const {
-    vector<Candidato&> result;
-    for (const auto& kv : candidatos) {
-        result.push_back(kv.second);
+const vector<Candidato*> Eleicao::getCandidatosValues() const {
+    vector<Candidato*> result;
+    for (auto kv : candidatos) {
+        result.push_back(&kv.second);
     }
     return result;
 }
 
 void Eleicao::addCandidato(Candidato& candidato) {
-    this->candidatos.insert({candidato.getNumero(), candidato});
+    this->candidatos.insert(pair<int, Candidato>(candidato.getNumero(), candidato));
 }
 
-const vector<Candidato&> Eleicao::getEleitos() const {
+const vector<Candidato*> Eleicao::getEleitos() const {
     return eleitos;
 }
 
 void Eleicao::addEleito(Candidato& eleito) {
-    eleitos.push_back(eleito);
+    eleitos.push_back(&eleito);
 }
 
 const Data& Eleicao::getData() const {
@@ -54,11 +54,11 @@ int Eleicao::getNumeroVagas() const {
     return numeroVagas;
 }
 
-const vector<Candidato&> Eleicao::getCandidatosMaisVotados() const {
+const vector<Candidato*>& Eleicao::getCandidatosMaisVotados() const {
     return candidatosMaisVotados;
 }
 
-const vector<Partido&> Eleicao::getPartidosMaisVotados() const {
+const vector<Partido*>& Eleicao::getPartidosMaisVotados() const {
     return partidosMaisVotados;
 }
 
@@ -79,7 +79,7 @@ void Eleicao::processaCandidato(
 
     if (it_part == partidos.end()) {
         Partido partido(numeroPart, siglaPart);
-        partidos.insert({partido.getNumero(), partido});
+        partidos.insert(pair<int, Partido>(partido.getNumero(), partido));
     }
 
     if (cargo != this->opcaoCargo) return; // Ignora candidatos de outros cargos
@@ -92,10 +92,10 @@ void Eleicao::processaCandidato(
     }
 
     Candidato candidato(cargo, ehDeferido, numeroCand, nomeCand, it_part->second, ehFederado, dataNasc, ehEleito, genero, ehVotoLegenda);
-    candidatos.insert({candidato.getNumero(), candidato});
-
+    it_part->second.addCandidato(&candidato);
+    candidatos.insert(pair<int, Candidato>(candidato.getNumero(), candidato));
     if (candidato.isEleito()) {
-        eleitos.push_back(candidato);
+        eleitos.push_back(&candidato);
     }
 }
 
@@ -128,11 +128,15 @@ void Eleicao::processaEleicao() {
 
     // Ordena lista de candidatos mais votados
     candidatosMaisVotados = getCandidatosValues();
-    sort(candidatosMaisVotados.begin(), candidatosMaisVotados.end(), greater<Candidato&>());
+    sort(candidatosMaisVotados.begin(), candidatosMaisVotados.end(), [](const Candidato* c1, const Candidato* c2) {
+        return c2 > c1;
+    });
 
     // Ordena lista de partidos conforme votos totais
     partidosMaisVotados = getPartidosValues();
-    sort(partidosMaisVotados.begin(), partidosMaisVotados.end(), greater<Partido&>());
+    sort(partidosMaisVotados.begin(), partidosMaisVotados.end(), [](const Partido* p1, const Partido* p2) {
+        return p2 > p1;
+    });
 
     // Gera e ordena lista de candidatos mais votados por partido
     for (auto& kv : partidos) {
@@ -140,5 +144,7 @@ void Eleicao::processaEleicao() {
     }
 
     // Ordena lista de candidatos eleitos
-    sort(eleitos.begin(), eleitos.end(), greater<Candidato&>());
+    sort(eleitos.begin(), eleitos.end(),[](const Candidato* c1, const Candidato* c2) {
+        return c2 > c1;
+    });
 }

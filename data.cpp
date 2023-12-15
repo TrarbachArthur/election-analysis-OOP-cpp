@@ -1,6 +1,24 @@
 #include "data.h"
 
+Data::Data() : dia(0), mes(0), ano(0) {}
+
 Data::Data(int dia, int mes, int ano) : dia(dia), mes(mes), ano(ano) {}
+
+Data::Data(string& dataStr) {
+    vector<string> separated;
+    istringstream ss(dataStr);
+    string token;
+
+    while (getline(ss, token, '/')) {
+        separated.push_back(token);
+    }
+
+    if (separated.size() != 3) throw invalid_argument("Data inválida");
+
+    this->dia = stoi(separated[0]);
+    this->mes = stoi(separated[1]);
+    this->ano = stoi(separated[2]);
+}
 
 int Data::getDiffAnos(const Data& data) const {
     int idade = data.ano - this->ano;

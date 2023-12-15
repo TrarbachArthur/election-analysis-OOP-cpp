@@ -9,6 +9,9 @@
 #include "data.h"
 #include "partido.h"
 
+class Partido;
+class Data;
+
 enum class TipoCandidato {
     OUTRO = 0,
     FEDERAL = 6,
@@ -64,7 +67,7 @@ public:
     void processaVotos(int votos);
     friend ostream& operator<<(ostream& os, const Candidato& t);
 
-    bool operator>(const Candidato& c) const;
+    bool operator>(const Candidato* c) const;
 };
 
 #endif // CANDIDATO_H

@@ -3,22 +3,24 @@
 
 #include <iostream>
 #include <vector>
-#include <map>
+#include <unordered_map>
 #include <algorithm>
 #include "candidato.h"
 
 using namespace std;
+
+class Candidato;
 
 class Partido {
 private:
     int votosLegenda;
     int numero;
     string sigla;
-    unordered_map<int, Candidato&> candidatosDeferidos;
-    unordered_map<int, Candidato&> candidatosIndeferidos;
+    unordered_map<int, Candidato*> candidatosDeferidos;
+    unordered_map<int, Candidato*> candidatosIndeferidos;
 
     int qtdEleitos;
-    vector<Candidato&> candidatosMaisVotados;
+    vector<Candidato*> candidatosMaisVotados;
 
 public:
     Partido(int numero, const string& sigla);
@@ -26,11 +28,11 @@ public:
     int getVotosLegenda() const;
     int getNumero() const;
     const string& getSigla() const;
-    const unordered_map<int, Candidato&>& getCandidatosDeferidos() const;
-    const unordered_map<int, Candidato&>& getCandidatosIndeferidos() const;
-    void addCandidato(Candidato& candidato);
+    const unordered_map<int, Candidato*>& getCandidatosDeferidos() const;
+    const unordered_map<int, Candidato*>& getCandidatosIndeferidos() const;
+    void addCandidato(Candidato* candidato);
     int getQtdEleitos() const;
-    const vector<Candidato&>& getCandidatosMaisVotados() const;
+    const vector<Candidato*>& getCandidatosMaisVotados() const;
     void processaVotos(int votos);
     int getVotosTotais() const;
     void processaCandidatosMaisVotados();
