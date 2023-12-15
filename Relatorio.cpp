@@ -1,6 +1,4 @@
-#include <iostream>
-#include <iomanip>
-#include "eleicao.h" // Certifique-se de incluir o cabeçalho correto para a classe Eleicao
+#include "Relatorio.h"
 
 class Relatorio {
 private:

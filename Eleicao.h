@@ -1,51 +1,51 @@
-// Eleicao.h
 #ifndef ELEICAO_H
 #define ELEICAO_H
 
 #include <vector>
 #include <unordered_map>
-#include <chrono>
-#include "Candidato.h"
-#include "Partido.h"
-#include "TipoCandidato.h"
+#include "data.h"
+#include "candidato.h"
+#include "partido.h"
+
+using namespace std;
 
 class Eleicao {
 private:
     TipoCandidato opcaoCargo;
-    std::unordered_map<int, Partido> partidos;
-    std::unordered_map<int, Candidato> candidatos;
-    std::vector<Candidato> eleitos;
-    std::chrono::system_clock::time_point data;
+    unordered_map<int, Partido&> partidos;
+    unordered_map<int, Candidato&> candidatos;
+    vector<Candidato&> eleitos;
+    const Data& data;
 
     int numeroVagas;
-    std::vector<Candidato> candidatosMaisVotados;
-    std::vector<Partido> partidosMaisVotados;
+    vector<Candidato&> candidatosMaisVotados;
+    vector<Partido&> partidosMaisVotados;
 
 public:
-    Eleicao(TipoCandidato opcaoCargo, const std::chrono::system_clock::time_point& data);
+    Eleicao(TipoCandidato opcaoCargo, const Data& data);
 
     TipoCandidato getOpcaoCargo() const;
-    std::unordered_map<int, Partido> getPartidos() const;
-    std::vector<Partido> getPartidosValues() const;
-    void addPartido(const Partido& partido);
-    std::unordered_map<int, Candidato> getCandidatos() const;
-    std::vector<Candidato> getCandidatosValues() const;
-    void addCandidato(const Candidato& candidato);
-    std::vector<Candidato> getEleitos() const;
-    void addEleito(const Candidato& eleito);
-    std::chrono::system_clock::time_point getData() const;
+    const unordered_map<int, Partido&> getPartidos() const;
+    const vector<Partido&> getPartidosValues() const;
+    void addPartido(Partido& partido);
+    const unordered_map<int, Candidato&> getCandidatos() const;
+    const vector<Candidato&> getCandidatosValues() const;
+    void addCandidato(Candidato& candidato);
+    const vector<Candidato&> getEleitos() const;
+    void addEleito(Candidato& eleito);
+    const Data& getData() const;
     int getNumeroVagas() const;
-    std::vector<Candidato> getCandidatosMaisVotados() const;
-    std::vector<Partido> getPartidosMaisVotados() const;
+    const vector<Candidato&> getCandidatosMaisVotados() const;
+    const vector<Partido&> getPartidosMaisVotados() const;
     void processaCandidato(
         TipoCandidato cargo,
         bool ehDeferido,
         int numeroCand,
-        const std::string& nomeCand,
+        const string& nomeCand,
         int numeroPart,
-        const std::string& siglaPart,
+        const string& siglaPart,
         bool ehFederado,
-        const std::chrono::system_clock::time_point& dataNasc,
+        const Data& dataNasc,
         bool ehEleito,
         Genero genero,
         bool ehVotoLegenda
@@ -58,4 +58,4 @@ public:
     void processaEleicao();
 };
 
-#endif // ELEICAO_H
+#endif

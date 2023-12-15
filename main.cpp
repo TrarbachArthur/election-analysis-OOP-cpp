@@ -2,11 +2,8 @@
 #include <string>
 #include <ctime>
 #include <iomanip>
-#include "Eleicao.h"
-#include "Genero.h"
-#include "TipoCandidato.h"
-#include "Leitor.h"
-#include "Relatorio.h"
+#include "leitor.h"
+#include "relatorio.h"
 
 
 int main(int argc, char *argv[]) {

@@ -1,83 +1,55 @@
-#include <iostream>
-#include <vector>
-#include <map>
-#include <algorithm>
-#include "Candidato.h"
+#include "partido.h"
 
-class Partido {
-private:
-    int votosLegenda;
-    int numero;
-    std::string sigla;
-    std::map<int, Candidato*> candidatosDeferidos;
-    std::map<int, Candidato*> candidatosIndeferidos;
-    int qtdEleitos;
-    std::vector<Candidato*> candidatosMaisVotados;
+Partido::Partido(int numero, const string& sigla) : votosLegenda(0), numero(numero), sigla(sigla), qtdEleitos(0) {}
 
-public:
-    Partido(int numero, const std::string& sigla) : votosLegenda(0), numero(numero), sigla(sigla), qtdEleitos(0) {}
+int Partido::getVotosLegenda() const {
+    return votosLegenda;
+}
 
-    int getVotosLegenda() const {
-        return votosLegenda;
+int Partido::getNumero() const {
+    return numero;
+}
+
+const string& Partido::getSigla() const {
+    return sigla;
+}
+
+const unordered_map<int, Candidato&>& Partido::getCandidatosDeferidos() const {
+    return candidatosDeferidos;
+}
+
+const unordered_map<int, Candidato&>& Partido::getCandidatosIndeferidos() const {
+    return candidatosIndeferidos;
+}
+
+void Partido::addCandidato(Candidato& candidato) {
+    if (candidato.isDeferido()) {
+        this->candidatosDeferidos.insert({candidato.getNumero(), candidato});
+
+        if (candidato.isEleito()) qtdEleitos++;
     }
-
-    int getNumero() const {
-        return numero;
+    else {
+        this->candidatosIndeferidos.insert({candidato.getNumero(), candidato});
     }
+}
 
-    const std::string& getSigla() const {
-        return sigla;
-    }
+int Partido::getQtdEleitos() const {
+    return qtdEleitos;
+}
 
-    const std::map<int, Candidato*>& getCandidatosDeferidos() const {
-        return candidatosDeferidos;
-    }
+const vector<Candidato&>& Partido::getCandidatosMaisVotados() const {
+    return candidatosMaisVotados;
+}
 
-    const std::map<int, Candidato*>& getCandidatosIndeferidos() const {
-        return candidatosIndeferidos;
-    }
-
-    void addCandidato(Candidato* candidato);
-
-    int getQtdEleitos() const {
-        return qtdEleitos;
-    }
-
-    const std::vector<Candidato*>& getCandidatosMaisVotados() const {
-        return candidatosMaisVotados;
-    }
-
-    void processaVotos(int votos) {
-        votosLegenda += votos;
-    }
-
-    int getVotosTotais() const;
-
-    void processaCandidatosMaisVotados();
-
-    friend std::ostream& operator<<(std::ostream& os, const Partido& partido);
-    
-    bool operator<(const Partido& p) const;
-};
-
-
-void Partido::addCandidato(Candidato* candidato) {
-    if (candidato->isDeferido()) {
-        candidatosDeferidos[candidato->getNumero()] = candidato;
-
-        if (candidato->isEleito()) {
-            qtdEleitos++;
-        }
-    } else {
-        candidatosIndeferidos[candidato->getNumero()] = candidato;
-    }
+void Partido::processaVotos(int votos) {
+    votosLegenda += votos;
 }
 
 int Partido::getVotosTotais() const {
     int votosTotais = getVotosLegenda();
 
     for (const auto& pair : candidatosDeferidos) {
-        votosTotais += pair.second->getVotos();
+        votosTotais += pair.second.getVotos();
     }
 
     return votosTotais;
@@ -89,17 +61,17 @@ void Partido::processaCandidatosMaisVotados() {
         candidatosMaisVotados.push_back(pair.second);
     }
 
-    std::sort(candidatosMaisVotados.begin(), candidatosMaisVotados.end(), [](const Candidato* c1, const Candidato* c2) {
-        return *c1 < *c2;
+    sort(candidatosMaisVotados.begin(), candidatosMaisVotados.end(), [](const Candidato* c1, const Candidato* c2) {
+        return *c1 > *c2;
     });
 }
 
-std::ostream& operator<<(std::ostream& os, const Partido& partido) {
+ostream& operator<<(ostream& os, const Partido& partido) {
     os << partido.getSigla() << " - " << partido.getNumero();
     return os;
 }
 
-bool Partido::operator<(const Partido& p) const {
+bool Partido::operator>(const Partido& p) const {
     int dif = p.getVotosTotais() - getVotosTotais();
 
     if (dif != 0) {
