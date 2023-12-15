@@ -80,9 +80,9 @@ void Relatorio::geraRelatorio6() const {
         int votosLegenda = p->getVotosLegenda();
         int votosNominais = votosTotais - votosLegenda;
 
-        cout << i << " - " << *p << ", " << to_string(votosTotais) << (votosTotais > 1 ? " votos (" : " voto (");
-        cout << to_string(votosNominais) << ((votosNominais > 0) ? " nominais e " : " nominal e ");
-        cout << to_string(votosLegenda) << " de legenda), " << p->getQtdEleitos();
+        cout << i << " - " << *p << ", " << votosTotais << (votosTotais > 1 ? " votos (" : " voto (");
+        cout << votosNominais << ((votosNominais > 0) ? " nominais e " : " nominal e ");
+        cout << votosLegenda << " de legenda), " << p->getQtdEleitos();
         cout << (p->getQtdEleitos() > 1 ? " candidatos eleitos" : " candidato eleito");
         cout << endl;
 
@@ -101,13 +101,13 @@ void Relatorio::geraRelatorio7() const {
             vector<Candidato*> p1MaisVotados = p1->getCandidatosMaisVotados();
             vector<Candidato*> p2MaisVotados = p2->getCandidatosMaisVotados();
 
-            if (p1MaisVotados.empty()) return true;
-            if (p2MaisVotados.empty()) return false;
+            if (p1MaisVotados.empty()) return false;
+            if (p2MaisVotados.empty()) return true;
 
             int dif = p2MaisVotados[0]->getVotos() - p1MaisVotados[0]->getVotos();
             if (dif != 0) return dif < 0;
 
-            return p1->getNumero() > p2->getNumero();
+            return p1->getNumero() < p2->getNumero();
         }
     );
 
@@ -119,8 +119,8 @@ void Relatorio::geraRelatorio7() const {
             const Candidato* maisVotado = candidatosMaisVotados[0];
             const Candidato* menosVotado = candidatosMaisVotados[candidatosMaisVotados.size() - 1];
 
-            cout << i << " - " << *p << ", " << maisVotado->getNome() << " (" << maisVotado->getNumero() << ", " << maisVotado->getVotos() << (maisVotado->getVotos() > 1 ? " votos) / " : " voto) / ");
-            cout << menosVotado->getNome() << " (" << menosVotado->getNumero() << ", " << menosVotado->getVotos() << (menosVotado->getVotos() > 1 ? " votos)" : " voto)") << endl;
+            cout << i << " - " << *p << ", " << maisVotado->getNome() << " (" << std::to_string(maisVotado->getNumero()) << ", " << maisVotado->getVotos() << (maisVotado->getVotos() > 1 ? " votos) / " : " voto) / ");
+            cout << menosVotado->getNome() << " (" << std::to_string(menosVotado->getNumero()) << ", " << menosVotado->getVotos() << (menosVotado->getVotos() > 1 ? " votos)" : " voto)") << endl;
             i++;
         }
     }
