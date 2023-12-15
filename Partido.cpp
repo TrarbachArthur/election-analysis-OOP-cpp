@@ -24,9 +24,7 @@ const unordered_map<int, Candidato*>& Partido::getCandidatosIndeferidos() const 
 
 void Partido::addCandidato(Candidato* candidato) {
     if (candidato->isDeferido()) {
-        cout << candidato->getNumero() << " - " << candidato->getNome() << endl;
         this->candidatosDeferidos.insert(pair<int, Candidato*>(candidato->getNumero(), candidato));
-        cout << *candidato << endl;
         if (candidato->isEleito()) qtdEleitos++;
     }
     else {
@@ -63,7 +61,7 @@ void Partido::processaCandidatosMaisVotados() {
     }
 
     sort(candidatosMaisVotados.begin(), candidatosMaisVotados.end(), [](const Candidato* c1, const Candidato* c2) {
-        return c1 > c2;
+        return *c1 > c2;
     });
 }
 

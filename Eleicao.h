@@ -12,8 +12,8 @@ using namespace std;
 class Eleicao {
 private:
     TipoCandidato opcaoCargo;
-    unordered_map<int, Partido> partidos;
-    unordered_map<int, Candidato> candidatos;
+    unordered_map<int, Partido*> partidos;
+    unordered_map<int, Candidato*> candidatos;
     vector<Candidato*> eleitos;
     const Data& data;
 
@@ -25,14 +25,14 @@ public:
     Eleicao(TipoCandidato opcaoCargo, const Data& data);
 
     TipoCandidato getOpcaoCargo() const;
-    const unordered_map<int, Partido>& getPartidos() const;
+    const unordered_map<int, Partido*>& getPartidos() const;
     const vector<Partido*> getPartidosValues() const;
     void addPartido(Partido& partido);
-    const unordered_map<int, Candidato>& getCandidatos() const;
+    const unordered_map<int, Candidato*>& getCandidatos() const;
     const vector<Candidato*> getCandidatosValues() const;
     void addCandidato(Candidato& candidato);
-    const vector<Candidato*> getEleitos() const;
-    void addEleito(Candidato& eleito);
+    const vector<Candidato*>& getEleitos() const;
+    void addEleito(Candidato* eleito);
     const Data& getData() const;
     int getNumeroVagas() const;
     const vector<Candidato*>& getCandidatosMaisVotados() const;

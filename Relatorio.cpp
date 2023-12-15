@@ -1,9 +1,7 @@
 #include "Relatorio.h"
 
 
-Relatorio::Relatorio(Eleicao& eleicao) : eleicao(eleicao) {
-    cout.imbue(locale("pt_BR.UTF-8"));
-}
+Relatorio::Relatorio(Eleicao& eleicao) : eleicao(eleicao) { }
 
 void Relatorio::geraRelatorio1() const {
     cout << "Número de vagas: " << eleicao.getNumeroVagas() << endl << endl;
@@ -13,10 +11,10 @@ void Relatorio::geraRelatorio2() const {
     string s = (eleicao.getOpcaoCargo() == TipoCandidato::FEDERAL) ? "federais" : "estaduais";
 
     cout << "Deputados " << s << " eleitos:" << endl;
-
+    
     int i = 1;
     for (Candidato* c : eleicao.getEleitos()) {
-        cout << to_string(i) << " - " << (c->isFederado() ? "*" : "") << *c << endl;
+        cout << to_string(i) << " - " << (c->isFederado() ? "*" : "") << c;
         i++;
     }
 
@@ -30,7 +28,7 @@ void Relatorio::geraRelatorio3() const {
 
     for (const Candidato* c : eleicao.getCandidatosMaisVotados()) {
         if (i > eleicao.getNumeroVagas()) break;
-        cout << to_string(i) << " - " << (c->isFederado() ? "*" : "") << *c << endl;
+        cout << to_string(i) << " - " << (c->isFederado() ? "*" : "") << c;
         i++;
     }
 
@@ -47,7 +45,7 @@ void Relatorio::geraRelatorio4() const {
     for (const Candidato* c : eleicao.getCandidatosMaisVotados()) {
         if (i > eleicao.getNumeroVagas()) break;
         if (find(eleitos.begin(), eleitos.end(), c) == eleitos.end()) {
-            cout << i << " - " << (c->isFederado() ? "*" : "") << *c << endl;
+            cout << i << " - " << (c->isFederado() ? "*" : "") << c;
         }
         i++;
     }
@@ -66,7 +64,7 @@ void Relatorio::geraRelatorio5() const {
         int pos = itr_candidato - candidatosMaisVotados.begin();
         
         if (pos >= eleicao.getNumeroVagas()) {
-            cout << to_string(pos + 1) << " - " << (c->isFederado() ? "*" : "") << *c << endl;
+            cout << to_string(pos + 1) << " - " << (c->isFederado() ? "*" : "") << c;
         }
     }
 
@@ -85,7 +83,7 @@ void Relatorio::geraRelatorio6() const {
         cout << i << " - " << *p << ", " << to_string(votosTotais) << (votosTotais > 1 ? " votos (" : " voto (");
         cout << to_string(votosNominais) << ((votosNominais > 0) ? " nominais e " : " nominal e ");
         cout << to_string(votosLegenda) << " de legenda), " << p->getQtdEleitos();
-        cout << (p->getQtdEleitos() > 1) ? " candidatos eleitos" : " candidato eleito";
+        cout << (p->getQtdEleitos() > 1 ? " candidatos eleitos" : " candidato eleito");
         cout << endl;
 
         i++;
@@ -107,7 +105,7 @@ void Relatorio::geraRelatorio7() const {
             if (p2MaisVotados.empty()) return false;
 
             int dif = p2MaisVotados[0]->getVotos() - p1MaisVotados[0]->getVotos();
-            if (dif != 0) return dif > 0;
+            if (dif != 0) return dif < 0;
 
             return p1->getNumero() > p2->getNumero();
         }
@@ -194,11 +192,11 @@ void Relatorio::geraRelatorio10() {
     int votosTotal = 0;
 
     for (const auto& pair : eleicao.getCandidatos()) {
-        votosNominais += pair.second.getVotos();
+        votosNominais += pair.second->getVotos();
     }
 
     for (const auto& pair : eleicao.getPartidos()) {
-        votosLegenda += pair.second.getVotosLegenda();
+        votosLegenda += pair.second->getVotosLegenda();
     }
 
     votosTotal = votosLegenda + votosNominais;

@@ -19,9 +19,9 @@ enum class TipoCandidato {
 };
 
 enum class Genero {
-    MASCULINO = 0,
-    FEMININO = 1,
-    OUTRO = 2
+    MASCULINO = 2,
+    FEMININO = 4,
+    OUTRO
 };
 
 class Candidato {
@@ -66,7 +66,9 @@ public:
 
     void processaVotos(int votos);
     friend ostream& operator<<(ostream& os, const Candidato& t);
+    friend ostream& operator<<(ostream& os, const Candidato* t);
 
+    bool operator>(const Candidato c) const;
     bool operator>(const Candidato* c) const;
 };
 

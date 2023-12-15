@@ -18,7 +18,7 @@ private:
     string& caminhoArquivoCandidatos;
     string& caminhoArquivoVotacao;
 public:
-    static const int CD_CARGO = 13;
+    static const int CD_CARGO = 17;
     static const int NR_VOTAVEL = 19;
     static const int QT_VOTOS = 21;
     static const int CD_CARGO_CAND = 13;

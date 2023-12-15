@@ -44,9 +44,11 @@ int main(int argc, char *argv[]) {
     Eleicao eleicao((TipoCandidato)opcaoCargo, data);
     Leitor leitor(eleicao, caminhoArquivoCandidatos, caminhoArquivoVotacao);
 
+    cout << "Lendo arquivos..." << endl;
     leitor.leArquivos();
+    cout << "Processando eleicao..." << endl;
     eleicao.processaEleicao();
-
+    cout << "Gerando relatorios..." << endl;
     Relatorio relatorio(eleicao);
     relatorio.geraRelatorios();
 

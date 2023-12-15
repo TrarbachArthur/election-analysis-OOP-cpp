@@ -19,8 +19,13 @@ Candidato::Candidato(
     ehFederado(ehFederado),
     dataNascimento(dataNascimento),
     ehEleito(ehEleito),
+    votosNominais(0),
     genero(genero),
-    ehVotoLegenda(ehVotoLegenda) {}
+    ehVotoLegenda(ehVotoLegenda)
+    {
+
+        partido.addCandidato(this);
+    }
 
 TipoCandidato Candidato::getTipo() const {
     return tipo;
@@ -80,8 +85,23 @@ ostream& operator<<(ostream& os, const Candidato& t) {
     return os;
 }
 
+ostream& operator<<(ostream& os, const Candidato* t) {
+    return os << *t;
+}
+
+
+bool Candidato::operator>(const Candidato c) const {
+    int dif = c.getVotos() - getVotos();
+
+    if (dif != 0) {
+        return dif < 0;
+    } else {
+        return dataNascimento < c.getDataNascimento();
+    }
+}
+
 bool Candidato::operator>(const Candidato* c) const {
-    int dif = c->getVotos() - getVotos();
+    int dif = c->getVotos() - this->getVotos();
 
     if (dif != 0) {
         return dif < 0;

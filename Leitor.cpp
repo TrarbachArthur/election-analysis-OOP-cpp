@@ -52,13 +52,13 @@ void Leitor::leArquivos() {
                 separated.push_back(token);
             }
 
-            // cout << separated[CD_CARGO] << endl;
-            int cargo = stoi(separated[CD_CARGO]);
-            // cout << separated[CD_SITU] << endl;
+            // cout << separated[CD_CARGO_CAND] << endl;
+            int cargo = stoi(separated[CD_CARGO_CAND]);
+            //cout << separated[CD_SITU] << endl;
             int situacaoCandidatura = stoi(separated[CD_SITU]);
-            // cout << separated[NR_CAND] << endl;
+            //cout << separated[NR_CAND] << endl;
             int numeroCandidato = stoi(separated[NR_CAND]);
-            // cout << separated[NM_URNA] << endl;
+            //cout << separated[NM_URNA] << endl;
             string nomeCandidato = separated[NM_URNA];
             // cout << separated[NR_PART] << endl;
             int numeroPartido = stoi(separated[NR_PART]);
@@ -88,7 +88,6 @@ void Leitor::leArquivos() {
             bool ehVotoLegenda = strTipoVoto == "Válido (legenda)";
             bool ehDeferido = situacaoCandidatura == 2 || situacaoCandidatura == 16;
 
-            cout << "Processando candidato" << endl;
             eleicao.processaCandidato(
                 (TipoCandidato) cargo,
                 ehDeferido,
@@ -133,11 +132,9 @@ void Leitor::leArquivos() {
             int cargo = stoi(separated[CD_CARGO]);
             int numeroVotado = stoi(separated[NR_VOTAVEL]);
             int qtdVotos = stoi(separated[QT_VOTOS]);
-            // int cargo = Leitor::le_conteudo_int(CD_CARGO, separated);
-            // int numeroVotado = Leitor::le_conteudo_int(NR_VOTAVEL, separated);
-            // int qtdVotos = Leitor::le_conteudo_int(QT_VOTOS, separated);
 
             if (numeroVotado != 95 && numeroVotado != 96 && numeroVotado != 97 && numeroVotado != 98) {
+                //cout << "Voto para " << numeroVotado << endl;
                 eleicao.processaVotos(
                     (TipoCandidato) cargo,
                     numeroVotado,
